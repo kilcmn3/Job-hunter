@@ -1,2 +1,2 @@
-class Comapny
+class Comapny < ActiveRecord::Base
 end

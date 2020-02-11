@@ -1,2 +1,2 @@
-class User_Company
+class User_ompany < ActiveRecord::Base
 end
