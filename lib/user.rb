@@ -11,4 +11,22 @@ class User < ActiveRecord::Base
         @id = DB[:conn].exectue("SELECT last_insert_rowid()FROM users ")[0][0]
         user.save
     end
+    
+    def self.user_input
+        puts "Enter your email"
+        input_email = gets.chomp
+        finder = User.user_find_email(input_email)
+        if finder == nil
+            puts "Enter your name"
+            input_name = gets.chomp
+            puts "Enter your contact number"
+            input_contact = gets.chomp
+        
+            User.create(name: input_name.downcase, email: input_email.downcase, contact: input_contact)
+        else
+            puts "Welcome back #{finder.name}!"
+        end
+        User_view.main_screen
+    end
+     
 end

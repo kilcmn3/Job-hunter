@@ -8,6 +8,15 @@ class Company < ActiveRecord::Base
         @id = DB[:conn].execute("SELECT last_insert_rowid() FROM comapny")
         company.save
     end
+
+    def self.find_list(input)
+        choice = input.downcase
+        chosen_language = Company.all.select do |companies|
+            companies.program_language == choice
+        end
+        User_view.display_companies(chosen_language)
+    end
+
 end
 
    
