@@ -5,7 +5,7 @@ class User_view < ActiveRecord::Base
     def self.user_or_company 
         input = @@prompt.select("who are you user? or company?", %w(User Company))
         if input == "User"
-            User.user_input
+            User.user_email
         elsif input == "Company"
             company_input
         end
