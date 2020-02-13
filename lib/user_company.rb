@@ -8,9 +8,8 @@ class User_Company < ActiveRecord::Base
     end
 
     def self.find_if_exit(result)
-        p "you are at if exit"
-        p result
-        User_Company.all.find{|company| company.company_email == result[0].email}
+        output = User_Company.all.find{|company| company.company_email == result.email}
+        output
     end
 
     def self.find_company(search)
@@ -30,26 +29,22 @@ class User_Company < ActiveRecord::Base
     end
 
     def self.find_applicants(company_data)
-        final_result = []
+        company_flat = company_data[0].email
         result = []
-        User_Company.all.select do |company|
-            company.company_email == company_data[0].email
-            result << company
-            final_result << result
+        result << User_Company.all
+        company_list = result[0].each do |company|
+                 company.company_email
              end
-    
-        if final_result.length > 0
-            user_only = final_result.flatten.map do |list_applicants|
+        
+        if company_list.length > 0
+            user_only = company_list.map do |list_applicants|
                 list_applicants.user_email
             end
-            user_result = []
-            list_user = []
-            list_user << User.all 
-            
-            list_user_object = user_only.each do |compare|
-                user_result << list_user[0].select {|users| compare == users.email }
-                end
-            return user_result[0]
+            final_result = []
+            user_only.each do |x|
+                final_result << User.user_find_email(x)
+            end
+            final_result
         else 
             puts "No applicants :-("
             User_view.company_menu(company_data)
@@ -68,6 +63,7 @@ class User_Company < ActiveRecord::Base
     end
 
     def self.destory_record(record)
+        p record
         User_Company.destroy(record.id)
         puts "Remove complete!!"
     end

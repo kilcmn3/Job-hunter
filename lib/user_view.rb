@@ -72,22 +72,21 @@ class User_view < ActiveRecord::Base
     def self.companyview_applicants_list(list)
         @@users = nil
         @@users = list
-        result = User_Company.find_applicants(list)
-       
-            users = result.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
+
+            users = list.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
             input = @@prompt.select("List of applicants", users , per_page: 4) 
         
             delimiters = [', ', ': ']
             split_input = input.split(Regexp.union(delimiters))[1]
-   
+            
             result = list.select do |user|
-            user.name== split_input
+            user.name == split_input
             end
-            self.companyview_selected_applicatn(result)
+            self.companyview_selected_applicatn(result[0])
     end
 
     def self.companyview_selected_applicatn(applicant)
-        puts "applicant name: #{applicant[0].name}, email: #{applicant[0].email}, contact: #{applicant[0].contact}"
+        puts "applicant name: #{applicant.name}, email: #{applicant.email}, contact: #{applicant.contact}"
         input = @@prompt.select("what would you like to do?") do |menu|
             menu.enum '.'
 
@@ -98,8 +97,8 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            user_profile = User_Company.find_if_exit(@@company)
-            p user_profile
+            user_profile = User_Company.find_if_exit(@@company[0])
+            User_Company.find_applicants(@@company)
             User_Company.destory_record(user_profile)
             self.companyview_applicants_list(@@users)
         when 2
@@ -259,9 +258,9 @@ class User_view < ActiveRecord::Base
     end
       
     def self.menu_with_chosen_company(result)
-        p result
         @@company = nil
-        @@company = result[0]
+        @@company = result
+
         puts "Company name: #{result[0].name} || Company email: #{result[0].email} || Program language: #{result[0].program_language}"
         input = @@prompt.select("What would you like to do?") do |menu|
             menu.enum '.'
@@ -283,12 +282,13 @@ class User_view < ActiveRecord::Base
 
     def self.user_apply_page(company_info)
         user_email = @@user[0].email
-        company_email = @@company.email
-        result = User_Company.find_if_exit(company_info)
+        company_email = @@company
+
+        result = User_Company.find_if_exit(company_email[0])
         if result == nil
-            User_Company.create(user_email: user_email,  company_email: company_email)
+            User_Company.create(user_email: user_email,  company_email: company_email[0].email)
             puts "Apply done!"
-            company_last = Company.find_company(company_email)
+            company_last = Company.find_company(company_email[0].email)
             self.menu_with_chosen_company(company_last)
         else 
             puts "You've already added!"
