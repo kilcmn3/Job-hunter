@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(version: 2020_02_11_215420) do
   end
 
   create_table "user_companies", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "company_id"
+    t.string "user_email"
+    t.string "company_email"
   end
 
   create_table "users", force: :cascade do |t|

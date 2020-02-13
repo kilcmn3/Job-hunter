@@ -10,7 +10,7 @@ class Company < ActiveRecord::Base
     end
 
     def self.find_company
-        p @@storage
+         @@storage
         Company.all.select do |companies|
             companies.program_language == @@storage[0]
         end

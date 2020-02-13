@@ -1,6 +1,9 @@
 puts "Welcome  to my User_create Test world!"
 class User_view < ActiveRecord::Base
     @@prompt = TTY::Prompt.new
+    @@companies = nil
+    @@company = nil
+    @@user = nil
 
     def self.user_or_company 
         input = @@prompt.select("who are you user? or company?") do |menu|
@@ -22,6 +25,9 @@ class User_view < ActiveRecord::Base
     end
 
     def self.user_menu(profile)
+        @@user = nil
+        @@user = profile
+
         input = @@prompt.select("What would you like to do?") do |menu|
             menu.choice 'View added List'
             menu.choice 'Edit profile'
@@ -30,7 +36,7 @@ class User_view < ActiveRecord::Base
         end
         case input
         when 'View added List'
-            puts "Companies lists"
+            User_Company.user_added_list(profile)
         when 'Edit profile'
             self.userview_edit_profile(profile)
         when 'Job Search'
@@ -52,7 +58,6 @@ class User_view < ActiveRecord::Base
          when 1
             self.userview_edit_profile_email(profile)
          when 2
-            p profile
             self.userview_edit_profile_contact(profile)
          when 3
             self.user_menu(profile)
@@ -79,7 +84,6 @@ class User_view < ActiveRecord::Base
     end
 
     def self.userview_edit_profile_contact(profile)
-        p profile
         puts "your current contact is #{profile[0].contact}"
         answer = @@prompt.yes?('Woud like to change?')
 
@@ -110,14 +114,13 @@ class User_view < ActiveRecord::Base
           if input == '**exit program!'
             puts "See you again!"
           else
-            p input
-            puts "what??"
           Company.display_companies_list(input)
           end
     end
 
     def self.display_companies(list)
-        @@storage = list
+        @@companies = nil
+        @@companies = list
         companies = list.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
         input = @@prompt.select("List of companies", companies , per_page: 4) 
         
@@ -131,6 +134,8 @@ class User_view < ActiveRecord::Base
     end
       
     def self.menu_with_chosen_company(result)
+        @@company = nil
+        @@company = result[0]
         puts "Company name: #{result[0].name} || Company email: #{result[0].email} || Program language: #{result[0].program_language}"
         input = @@prompt.select("What would you like to do?") do |menu|
             menu.enum '.'
@@ -142,12 +147,38 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            puts "Apply done!"
-            self.display_companies(@@storage)
+            self.user_apply_page(result)
         when 2
-            self.display_companies(@@storage)
+            self.display_companies(@@companies)
         when 3
             self.main_screen
+        end
+    end
+
+    def self.user_apply_page(company_info)
+        p "prrrrinting out company info!"
+        p company_info
+        result = User_Company.find_if_exit(company_info)
+        if result == nil
+            User_Company.create(user_email: @@user[0].email, company_email: @@company.email)
+            puts "Apply done!"
+            self.menu_with_chosen_company(@@company)
+        else 
+            puts "You've already added!"
+            input = @@prompt.select("what would you like to do?") do |menu|
+                menu.enum '.'
+
+                menu.choice 'Remove from my list', 1
+                menu.choice 'previouse page', 2
+            end
+
+            case input
+            when 1
+                destroy_it = User_Company.destory_record(result)
+                self.menu_with_chosen_company(company_info)
+            when 2
+                self.menu_with_chosen_company(company_info)
+            end
         end
     end
         
