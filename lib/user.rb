@@ -9,47 +9,58 @@ class User < ActiveRecord::Base
         user.save
     end
 
-    def self.user_find_email   
-        User.all.find{|user| user.email == @@storage[0]}
+    def self.user_find_email(email= nil)
+        find_profile = nil
+        if @@storage.length > 0 && email == nil
+        find_profile = User.all.find{|user| user.email == @@storage[0]}
+        else
+        find_profile = User.all.find{|user| user.email == email}
+        end
+        find_profile
     end
 
     def self.until_no_blank(input = "")
         result = nil
+        edit_profile = nil
         while input = gets.chomp
             case blank = self.blank_string?(input)
             when blank == true
                  @@storage << input.downcase
+                 edit_profile = input.downcase
                 break
             else
-                puts "please re-enter again"
+                puts "please try it again"
             end
         end
+        edit_profile
     end
 
     def self.user_email
-        puts "Enter your email"  
+        puts "What's your @email?"  
         self.until_no_blank
         result = self.user_find_email
         if result == nil
             user_name
-        else 
+        else
+            profile = []
+            profile << result
             puts "Welcome back #{result.name}"
-            User_view.main_screen
+            User_view.user_menu(profile)
         end
     end
 
     def self.user_name
-        puts "Enter your name"
+        puts "and your name? ex)John Doe, Dwayne Johnson"
         self.until_no_blank
         user_contact
     end
 
     def self.user_contact
-        puts "Enter your contact number"
+        puts "ok! last, your contact"
         self.until_no_blank
         self.create(name: @@storage[1], email: @@storage[0], contact: @@storage[2])
     end
-     
+
     def self.blank_string?(input)
         blank = /\A[[:space:]]*\z/
         blank.match?(input) ? nil : true
