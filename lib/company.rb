@@ -2,7 +2,7 @@ class Company < ActiveRecord::Base
     has_many :User_Company
     has_many :User , through: :User_Company
 
-    @@result = []
+    @@storage = []
 
     def create(name:, email:, program_language: )
         company = Company.new(name, email, program_language)
@@ -10,8 +10,9 @@ class Company < ActiveRecord::Base
     end
 
     def self.find_company
+        p @@storage
         Company.all.select do |companies|
-            companies.program_language == @@result[0]
+            companies.program_language == @@storage[0]
         end
     end
 
@@ -20,7 +21,7 @@ class Company < ActiveRecord::Base
         while input = gets.chomp
             case blank = User.blank_string?(input)
             when blank == true
-                 @@result << input.downcase
+                 @@storage << input.downcase
                 break
             else
                 puts "please re-enter again"
@@ -40,7 +41,8 @@ class Company < ActiveRecord::Base
     end
 
     def self.display_companies_list(input)
-        @@result << input.downcase
+        @@storage = []
+        @@storage << input.downcase
         list = self.find_company
 
         User_view.display_companies(list)

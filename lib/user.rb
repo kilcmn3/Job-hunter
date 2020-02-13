@@ -2,15 +2,15 @@ class User < ActiveRecord::Base
     has_many :User_Company
     has_many :Company , through: :User_Company
 
-    @@result = []
+    @@storage = []
 
     def self.create(name: ,email: ,contact: )
-        user = User.new(name: @@result[1], email: @@result[0], contact: @@result[2])
+        user = User.new(name: @@storage[1], email: @@storage[0], contact: @@storage[2])
         user.save
     end
 
     def self.user_find_email   
-        User.all.find{|user| user.email == @@result[0]}
+        User.all.find{|user| user.email == @@storage[0]}
     end
 
     def self.until_no_blank(input = "")
@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
         while input = gets.chomp
             case blank = self.blank_string?(input)
             when blank == true
-                 @@result << input.downcase
+                 @@storage << input.downcase
                 break
             else
                 puts "please re-enter again"
@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
     def self.user_contact
         puts "Enter your contact number"
         self.until_no_blank
-        self.create(name: @@result[1], email: @@result[0], contact: @@result[2])
+        self.create(name: @@storage[1], email: @@storage[0], contact: @@storage[2])
     end
      
     def self.blank_string?(input)
