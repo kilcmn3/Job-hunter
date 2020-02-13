@@ -11,16 +11,13 @@ class User_Company < ActiveRecord::Base
         User_Company.all.find{|company| company.company_email == result[0].email}
     end
 
-    def self.find_join(search)
-        p search
-       search_list = User_Company.all.select do |join|
-            join.user_email == search[0].email
+    def self.find_company(search)
+       search_list = User_Company.all.select do |search|
+            search.user_email == search[0].email
         end
-        search_list
         companies = search_list.map do |only_company|
             only_company.company_email
         end
-        companies
         result = companies.map do |company|
             Company.all.select do |finder|
                 finder.email == company
@@ -29,10 +26,32 @@ class User_Company < ActiveRecord::Base
         result[0]
     end
 
+    def self.find_applicants(company_data)
+        list_email = User_Company.all.select do |company|
+            company.company_email == company_data[0].email
+        end
+        if list_email.length > 1
+            user_only = list_email.map do |find_user|
+                find_user.user_email
+            end
+            result = User.all.select do |user|
+            user.email == result[0].user_email
+            end
+        else
+            puts "No applicants :-("
+            User_view.company_menu
+        end
+    end
+
     def self.user_added_list(profile)
         puts "Companies lists"
-       companies_list = self.find_join(profile)
+       companies_list = self.find_company(profile)
+       if companies_list != nil
        User_view.display_companies(companies_list)
+       else
+        puts "Empty slots"
+        User_view.userview_edit_profile(profile)
+       end
     end
 
     def self.destory_record(record)

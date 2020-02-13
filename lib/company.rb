@@ -9,34 +9,50 @@ class Company < ActiveRecord::Base
         company.save
     end
 
-    def self.find_company
-         @@storage
-        Company.all.select do |companies|
+    def self.find_company(email = nil)
+        company_profile = nil
+        if email == nil
+            company_profile = Company.all.select do |companies|
             companies.program_language == @@storage[0]
+            end
+        else
+            company_profile = Company.all.select do |companies|
+            companies.email == email
+            end
         end
+        puts "companyprofile is"
+        p company_profile
     end
 
     def self.until_no_blank(input = "")
         result = nil
+        edit_profile = nil
         while input = gets.chomp
             case blank = User.blank_string?(input)
             when blank == true
                  @@storage << input.downcase
+                 edit_profile = input.downcase
                 break
             else
                 puts "please re-enter again"
             end
         end
+        edit_profile
     end
     
     def self.match_company
         puts "Hello! Please enter your company email."
-        self.until_no_blank
-        if self.find_company == nil
+        company_email = Company.until_no_blank
+        result = self.find_company(company_email)
+            if result == false
             puts "Sorry, but you've not register company."
         else
+            puts "what is the reuslt?"
+            p result
+            @@storage = nil
+            @@storage = result
             puts "Welcome back!"
-            puts "Please select your option"
+            User_view.company_menu(result)
         end
     end
 

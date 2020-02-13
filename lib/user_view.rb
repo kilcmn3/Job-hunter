@@ -4,6 +4,7 @@ class User_view < ActiveRecord::Base
     @@companies = nil
     @@company = nil
     @@user = nil
+    @@users = nil
 
     def self.user_or_company 
         input = @@prompt.select("who are you user? or company?") do |menu|
@@ -43,6 +44,121 @@ class User_view < ActiveRecord::Base
             self.main_screen
         when 'previous page'
             self.user_or_company
+        end
+    end
+
+    def self.company_menu(company_profile)
+        input = @@prompt.select("What would like to do?") do |menu|
+            menu.enum '.'
+
+            menu.choice 'Applicant list', 1
+            menu.choice 'Edit profile', 2
+            menu.choice 'previsoue page', 3
+        end
+
+        case input
+        when 1
+            list =User_Company.find_applicants(@@company)
+            self.companyview_applicants_list(list)
+        when 2
+            puts "yoyoyoyo"
+            p company_profile
+            self.companyview_edit_profile(@@company)
+        when 3
+            self.user_or_company
+        end
+    end
+
+    def self.companyview_applicants_list(list)
+        @@users = nil
+        @@users = list
+        users = list.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
+        input = @@prompt.select("List of applicants", users , per_page: 4) 
+        
+        delimiters = [', ', ': ']
+        split_input = input.split(Regexp.union(delimiters))[1]
+   
+        result = list.select do |user|
+            user.name== split_input
+       end
+       self.companyview_selected_applicatn(result)
+    end
+
+    def self.companyview_selected_applicatn(applicant)
+        puts "applicant name: #{applicant[0].name}, email: #{applicant[0].email}, contact: #{applicant[0].contact}"
+
+        input = @@prompt.select("what would you like to do?") do |menu|
+            menu.enum '.'
+
+            menu.choice 'Remove applicant', 1
+            menu.choice 'previouse page', 2
+        end
+
+        case input
+        when 1
+            user_profile = User.user_find_email(applicant[0].user_email)
+            User_Company.destory_record(user_profile)
+            self.companyview_applicants_list(@@users)
+        when 2
+            self.companyview_applicants_list(@@users)
+        end
+    end
+
+    def self.companyview_edit_profile(company_profile)
+        input = @@prompt.select("Company infomation") do |menu|
+            menu.enum '.'
+
+            menu.choice '@email', 1
+            menu.choice 'Program Language', 2
+            menu.choice 'previouse page', 3
+        end
+
+        case input
+        when 1
+            self.companyview_edit_profile_email(company_profile)
+        when 2
+            self.companyview_edit_profile_contact(company_profile)
+        when 3
+            self.company_menu(company_profile)
+        end
+
+    end
+
+    def self.companyview_edit_profile_email(company_profile)
+        puts "Company current @email is #{company_profile[0].email}"
+        answer = @@prompt.yes?('Woud like to change?')
+          
+        case answer
+        when true
+        puts "Company new @email please"
+        new_email = Company.until_no_blank
+        company = Company.find_company(company_profile[0].email)
+        company.email = new_email
+        company.save
+        company_new_profile = []
+        company_new_profile << user
+        self.userview_edit_profile(company_new_profile)
+        when false
+            self.userview_edit_profile(company_profile)
+        end
+    end
+
+    def self.companyview_edit_profile_contact(company_profile)
+        puts "your current contact is #{company_profile[0].contact}"
+        answer = @@prompt.yes?('Woud like to change?')
+
+        case answer
+        when true
+        puts "your new contact please"
+        new_contact = Company.until_no_blank
+        user = Company.find_company(company_profile[0].email)
+        company.email = new_email
+        company.save
+        company_new_profile = []
+        company_new_profile << user
+        self.userview_edit_profile(company_new_profile)
+        when false
+            self.userview_edit_profile(company_profile)
         end
     end
 
@@ -156,8 +272,6 @@ class User_view < ActiveRecord::Base
     end
 
     def self.user_apply_page(company_info)
-        p "prrrrinting out company info!"
-        p company_info
         result = User_Company.find_if_exit(company_info)
         if result == nil
             User_Company.create(user_email: @@user[0].email, company_email: @@company.email)
@@ -181,5 +295,4 @@ class User_view < ActiveRecord::Base
             end
         end
     end
-        
 end
