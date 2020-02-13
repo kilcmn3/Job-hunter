@@ -48,17 +48,19 @@ class User_view < ActiveRecord::Base
     end
 
     def self.company_menu(company_profile)
+        @@company = nil
+        @@company = company_profile
         input = @@prompt.select("What would like to do?") do |menu|
             menu.enum '.'
 
-            menu.choice 'Applicant list', 1
+            menu.choice 'Applicants list', 1
             menu.choice 'Edit profile', 2
             menu.choice 'previsoue page', 3
         end
 
         case input
         when 1
-            list =User_Company.find_applicants(company_profile)
+            list = User_Company.find_applicants(company_profile)
             self.companyview_applicants_list(list)
         when 2
             self.companyview_edit_profile(company_profile)
@@ -70,19 +72,22 @@ class User_view < ActiveRecord::Base
     def self.companyview_applicants_list(list)
         @@users = nil
         @@users = list
-        users = list.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
-        input = @@prompt.select("List of applicants", users , per_page: 4) 
+        result = User_Company.find_applicants(list)
+       
+            users = result.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
+            input = @@prompt.select("List of applicants", users , per_page: 4) 
         
-        delimiters = [', ', ': ']
-        split_input = input.split(Regexp.union(delimiters))[1]
+            delimiters = [', ', ': ']
+            split_input = input.split(Regexp.union(delimiters))[1]
    
-        result = list.select do |user|
+            result = list.select do |user|
             user.name== split_input
-       end
-       self.companyview_selected_applicatn(result)
+            end
+            self.companyview_selected_applicatn(result)
     end
 
     def self.companyview_selected_applicatn(applicant)
+        p applicant
         puts "applicant name: #{applicant[0].name}, email: #{applicant[0].email}, contact: #{applicant[0].contact}"
 
         input = @@prompt.select("what would you like to do?") do |menu|
@@ -90,6 +95,7 @@ class User_view < ActiveRecord::Base
 
             menu.choice 'Remove applicant', 1
             menu.choice 'previouse page', 2
+            menu.choice 'Go back to Main menu', 3
         end
 
         case input
@@ -99,6 +105,8 @@ class User_view < ActiveRecord::Base
             self.companyview_applicants_list(@@users)
         when 2
             self.companyview_applicants_list(@@users)
+        when 3
+            self.company_menu(@@company)
         end
     end
 

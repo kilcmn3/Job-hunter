@@ -43,7 +43,7 @@ class Company < ActiveRecord::Base
         puts "Hello! Please enter your company email."
         company_email = Company.until_no_blank
         result = self.find_company(company_email)
-            if result.length == 0
+        if  result.length == 0
             puts "Company is not registered yet."
             User_view.user_or_company
         else

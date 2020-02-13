@@ -28,19 +28,30 @@ class User_Company < ActiveRecord::Base
     end
 
     def self.find_applicants(company_data)
-        list_email = User_Company.all.select do |company|
+        final_result = []
+        result = []
+        User_Company.all.select do |company|
             company.company_email == company_data[0].email
-        end
-        if list_email.length > 1
-            user_only = list_email.map do |find_user|
-                find_user.user_email
+            result << company
+            final_result << result
+             end
+    
+        if final_result.length > 0
+            user_only = final_result.flatten.map do |list_applicants|
+                list_applicants.user_email
             end
-            result = User.all.select do |user|
-            user.email == result[0].user_email
-            end
-        else
+            user_result = []
+            list_user = []
+            list_user << User.all 
+            
+            list_user_object = user_only.each do |compare|
+                user_result << list_user[0].select {|users| compare == users.email }
+                end
+            p user_result
+            return user_result[0]
+        else 
             puts "No applicants :-("
-            User_view.company_menu
+            User_view.company_menu(company_data)
         end
     end
 
