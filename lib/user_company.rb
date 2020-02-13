@@ -8,6 +8,8 @@ class User_Company < ActiveRecord::Base
     end
 
     def self.find_if_exit(result)
+        p "you are at if exit"
+        p result
         User_Company.all.find{|company| company.company_email == result[0].email}
     end
 
@@ -47,7 +49,6 @@ class User_Company < ActiveRecord::Base
             list_user_object = user_only.each do |compare|
                 user_result << list_user[0].select {|users| compare == users.email }
                 end
-            p user_result
             return user_result[0]
         else 
             puts "No applicants :-("

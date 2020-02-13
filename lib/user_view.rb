@@ -87,9 +87,7 @@ class User_view < ActiveRecord::Base
     end
 
     def self.companyview_selected_applicatn(applicant)
-        p applicant
         puts "applicant name: #{applicant[0].name}, email: #{applicant[0].email}, contact: #{applicant[0].contact}"
-
         input = @@prompt.select("what would you like to do?") do |menu|
             menu.enum '.'
 
@@ -100,7 +98,8 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            user_profile = User.user_find_email(applicant[0].user_email)
+            user_profile = User_Company.find_if_exit(@@company)
+            p user_profile
             User_Company.destory_record(user_profile)
             self.companyview_applicants_list(@@users)
         when 2

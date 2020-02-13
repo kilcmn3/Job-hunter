@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
         else
         find_profile = User.all.find{|user| user.email == email}
         end
-        find_profile
+        p find_profile
     end
 
     def self.until_no_blank(input = "")
