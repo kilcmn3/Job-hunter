@@ -20,8 +20,7 @@ class Company < ActiveRecord::Base
             companies.email == email
             end
         end
-        puts "companyprofile is"
-        p company_profile
+            company_profile
     end
 
     def self.until_no_blank(input = "")
@@ -44,11 +43,10 @@ class Company < ActiveRecord::Base
         puts "Hello! Please enter your company email."
         company_email = Company.until_no_blank
         result = self.find_company(company_email)
-            if result == false
-            puts "Sorry, but you've not register company."
+            if result.length == 0
+            puts "Company is not registered yet."
+            User_view.user_or_company
         else
-            puts "what is the reuslt?"
-            p result
             @@storage = nil
             @@storage = result
             puts "Welcome back!"

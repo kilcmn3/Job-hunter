@@ -58,12 +58,10 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            list =User_Company.find_applicants(@@company)
+            list =User_Company.find_applicants(company_profile)
             self.companyview_applicants_list(list)
         when 2
-            puts "yoyoyoyo"
-            p company_profile
-            self.companyview_edit_profile(@@company)
+            self.companyview_edit_profile(company_profile)
         when 3
             self.user_or_company
         end
@@ -117,7 +115,7 @@ class User_view < ActiveRecord::Base
         when 1
             self.companyview_edit_profile_email(company_profile)
         when 2
-            self.companyview_edit_profile_contact(company_profile)
+            self.companyview_edit_profile_program_language(company_profile)
         when 3
             self.company_menu(company_profile)
         end
@@ -132,33 +130,37 @@ class User_view < ActiveRecord::Base
         when true
         puts "Company new @email please"
         new_email = Company.until_no_blank
-        company = Company.find_company(company_profile[0].email)
+        company = Company.find_company(company_profile[0].email)[0]
         company.email = new_email
         company.save
+        puts "Company new @email is #{company.email}"
+
         company_new_profile = []
-        company_new_profile << user
-        self.userview_edit_profile(company_new_profile)
+        company_new_profile << company
+        self.companyview_edit_profile(company_new_profile)
         when false
-            self.userview_edit_profile(company_profile)
+            self.companyview_edit_profile(company_profile)
         end
     end
 
-    def self.companyview_edit_profile_contact(company_profile)
-        puts "your current contact is #{company_profile[0].contact}"
-        answer = @@prompt.yes?('Woud like to change?')
+    def self.companyview_edit_profile_program_language(company_profile)
+        puts "Company current program language is #{company_profile[0].program_language}"
+        answer = @@prompt.yes?('Would you like to change?')
 
         case answer
         when true
-        puts "your new contact please"
-        new_contact = Company.until_no_blank
-        user = Company.find_company(company_profile[0].email)
-        company.email = new_email
+        puts "please enter new language to be change."
+        new_language = Company.until_no_blank
+        company = Company.find_company(company_profile[0].email)[0]
+        company.program_language = new_language
         company.save
+        puts "Company new program langauge is #{company.program_language}"
+
         company_new_profile = []
-        company_new_profile << user
-        self.userview_edit_profile(company_new_profile)
+        company_new_profile << company
+        self.companyview_edit_profile(company_new_profile)
         when false
-            self.userview_edit_profile(company_profile)
+            self.companyview_edit_profile(company_profile)
         end
     end
 
@@ -190,7 +192,7 @@ class User_view < ActiveRecord::Base
         new_email = User.until_no_blank
         user = User.user_find_email(profile[0].email)
         user.email = new_email
-        user.save
+        user[0].save
         user_profile = []
         user_profile << user
         self.userview_edit_profile(user_profile)
@@ -250,6 +252,7 @@ class User_view < ActiveRecord::Base
     end
       
     def self.menu_with_chosen_company(result)
+        p result
         @@company = nil
         @@company = result[0]
         puts "Company name: #{result[0].name} || Company email: #{result[0].email} || Program language: #{result[0].program_language}"
@@ -267,16 +270,19 @@ class User_view < ActiveRecord::Base
         when 2
             self.display_companies(@@companies)
         when 3
-            self.main_screen
+            self.user_menu(@@user)
         end
     end
 
     def self.user_apply_page(company_info)
+        user_email = @@user[0].email
+        company_email = @@company.email
         result = User_Company.find_if_exit(company_info)
         if result == nil
-            User_Company.create(user_email: @@user[0].email, company_email: @@company.email)
+            User_Company.create(user_email: user_email,  company_email: company_email)
             puts "Apply done!"
-            self.menu_with_chosen_company(@@company)
+            company_last = Company.find_company(company_email)
+            self.menu_with_chosen_company(company_last)
         else 
             puts "You've already added!"
             input = @@prompt.select("what would you like to do?") do |menu|

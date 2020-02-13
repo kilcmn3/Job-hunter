@@ -12,8 +12,9 @@ class User_Company < ActiveRecord::Base
     end
 
     def self.find_company(search)
+        search_email = search[0]
        search_list = User_Company.all.select do |search|
-            search.user_email == search[0].email
+            search.user_email == search_email.email
         end
         companies = search_list.map do |only_company|
             only_company.company_email
@@ -50,7 +51,7 @@ class User_Company < ActiveRecord::Base
        User_view.display_companies(companies_list)
        else
         puts "Empty slots"
-        User_view.userview_edit_profile(profile)
+        User_view.user_menu(profile)
        end
     end
 

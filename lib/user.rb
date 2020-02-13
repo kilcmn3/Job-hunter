@@ -59,6 +59,8 @@ class User < ActiveRecord::Base
         puts "ok! last, your contact"
         self.until_no_blank
         self.create(name: @@storage[1], email: @@storage[0], contact: @@storage[2])
+        profile = User.all.last
+        User_view.user_menu(profile)
     end
 
     def self.blank_string?(input)
