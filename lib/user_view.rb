@@ -7,7 +7,7 @@ class User_view < ActiveRecord::Base
         if input == "User"
             User.user_email
         elsif input == "Company"
-            company_input
+            Company.match_company
         end
     end
 
@@ -19,11 +19,11 @@ class User_view < ActiveRecord::Base
               menu.choice 'JavaScript'
               menu.choice 'C'
           end
-          Company.find_list(input)
+          Company.display_companies_list(input)
       end
 
-      def self.display_companies(chosen_language)
-        list = chosen_language.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
-        @@prompt.select("List of companies", list) 
+      def self.display_companies(list)
+        companies = list.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
+        @@prompt.select("List of companies", companies , per_page: 4) 
       end
 end

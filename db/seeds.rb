@@ -1,9 +1,9 @@
 require 'faker'
 require_all 'lib'
 
-david_shin = User.create(name: "David Shin", email: "david@email", contact: "111-222-3333")
+# david_shin = User.create(name: "David Shin", email: "david@email", contact: "111-222-3333")
 
-companyA = Company.create(name: "FlatIron School", email: "flaironschool@email.com", program_language: "ruby")
+companyA = Company.create(name: "FlatIron School", email: "flatironschool@email.com", program_language: "ruby")
 companyB = Company.create(name: "Mcdonald", email: "mcdonald@email.com", program_language: "ruby")
 companyC = Company.create(name: "Burger King", email: "burgerking@email.com", program_language: "java")
 companyD = Company.create(name: "KFC", email: "kfc@email.com", program_language: "python")

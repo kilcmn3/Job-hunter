@@ -5,13 +5,12 @@ class User < ActiveRecord::Base
     @@result = []
 
     def self.create(name: ,email: ,contact: )
-        user = User.new(name: @@result[1], email: @@result[0], contact: @@result[2] ,id: nil)
-        @id = DB[:conn].execute("SELECT last_insert_rowid()FROM users ")[0][0]
+        user = User.new(name: @@result[1], email: @@result[0], contact: @@result[2])
         user.save
     end
 
     def self.user_find_email   
-        result = User.all.find{|user| user.email == @@result}
+        User.all.find{|user| user.email == @@result[0]}
     end
 
     def self.until_no_blank(input = "")
@@ -19,7 +18,7 @@ class User < ActiveRecord::Base
         while input = gets.chomp
             case blank = self.blank_string?(input)
             when blank == true
-                 @@result << input
+                 @@result << input.downcase
                 break
             else
                 puts "please re-enter again"
@@ -27,11 +26,16 @@ class User < ActiveRecord::Base
         end
     end
 
-    #calling class method from instance method
     def self.user_email
         puts "Enter your email"  
         self.until_no_blank
-        user_name
+        result = self.user_find_email
+        if result == nil
+            user_name
+        else 
+            puts "Welcome back #{result.name}"
+            User_view.main_screen
+        end
     end
 
     def self.user_name
