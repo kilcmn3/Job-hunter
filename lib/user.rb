@@ -36,11 +36,12 @@ class User < ActiveRecord::Base
     end
 
     def self.user_email
+        @@storage = []
         puts "What's your @email?"  
         self.until_no_blank
         result = self.user_find_email
         if result == nil
-            user_name
+            self.user_name
         else
             profile = []
             profile << result
@@ -59,8 +60,8 @@ class User < ActiveRecord::Base
         puts "ok! last, your contact"
         self.until_no_blank
         self.create(name: @@storage[1], email: @@storage[0], contact: @@storage[2])
-        profile = User.all.last
-        User_view.user_menu(profile)
+        user = User.all.select{|new_user| new_user.email = @@storage[0]}
+        User_view.user_menu(user)
     end
 
     def self.blank_string?(input)

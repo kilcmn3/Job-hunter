@@ -10,7 +10,6 @@ class Company < ActiveRecord::Base
     end
 
     def self.find_company(email = nil)
-        company_profile = nil
         if email == nil
             company_profile = Company.all.select do |companies|
             companies.program_language == @@storage[0]
@@ -20,7 +19,7 @@ class Company < ActiveRecord::Base
             companies.email == email
             end
         end
-            company_profile
+          company_profile
     end
 
     def self.until_no_blank(input = "")
@@ -58,7 +57,6 @@ class Company < ActiveRecord::Base
         @@storage = []
         @@storage << input.downcase
         list = self.find_company
-
         User_view.display_companies(list)
     end
 end

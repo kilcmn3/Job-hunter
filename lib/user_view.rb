@@ -198,7 +198,7 @@ class User_view < ActiveRecord::Base
         new_email = User.until_no_blank
         user = User.user_find_email(profile[0].email)
         user.email = new_email
-        user[0].save
+        user.save
         user_profile = []
         user_profile << user
         self.userview_edit_profile(user_profile)
