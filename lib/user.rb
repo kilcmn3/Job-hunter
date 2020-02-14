@@ -10,7 +10,6 @@ class User < ActiveRecord::Base
     end
 
     def self.user_find_email(email= nil)
-        find_profile = nil
         if @@storage.length > 0 && email == nil
         find_profile = User.all.find{|user| user.email == @@storage[0]}
         else
