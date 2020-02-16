@@ -10,23 +10,6 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_11_215420) do
-
-  create_table "companies", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "program_language"
-  end
-
-  create_table "user_companies", force: :cascade do |t|
-    t.string "user_email"
-    t.string "company_email"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.string "contact"
-  end
+ActiveRecord::Schema.define(version: 0) do
 
 end

@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
-    has_many :User_Company
-    has_many :Company , through: :User_Company
+    has_many :user_companies
+    has_many :companies , through: :user_companies
+
+
 
     @@storage = []
 
@@ -52,7 +54,7 @@ class User < ActiveRecord::Base
     def self.user_name
         puts "and your name? ex)John Doe, Dwayne Johnson"
         self.until_no_blank
-        user_contact
+        self.user_contact
     end
 
     def self.user_contact

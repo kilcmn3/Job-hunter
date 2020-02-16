@@ -1,6 +1,6 @@
 class Company < ActiveRecord::Base
-    has_many :User_Company
-    has_many :User , through: :User_Company
+    has_many :user_companies
+    has_many :users , through: :user_companies
 
     @@storage = []
 

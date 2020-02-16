@@ -1,6 +1,6 @@
-class User_Company < ActiveRecord::Base
-    belongs_to :User 
-    belongs_to :Company
+class UserCompany < ActiveRecord::Base
+    belongs_to :user 
+    belongs_to :company
     
     def self.create(user_email: , company_email:)
         user_company = User_Company.new(user_email: user_email, company_email: company_email)
