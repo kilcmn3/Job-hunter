@@ -2,19 +2,18 @@ class UserCompany < ActiveRecord::Base
     belongs_to :user 
     belongs_to :company
     
-    def self.create(user_email: , company_email:)
-        user_company = User_Company.new(user_email: user_email, company_email: company_email)
+    def self.create(user_id: , company_id:)
+        user_company = UserCompany.new(user_email, company_email)
         user_company.save
     end
 
-    def self.find_if_exit(result)
-        output = User_Company.all.find{|company| company.company_email == result.email}
-        output
-    end
+    # def self.find_if_exit(id)
+    #    result = UserCompany.find(id)
+    # end
 
     def self.find_company(search)
         search_email = search[0]
-       search_list = User_Company.all.select do |search|
+       search_list = UserCompany.all.select do |search|
             search.user_email == search_email.email
         end
         companies = search_list.map do |only_company|
@@ -31,7 +30,7 @@ class UserCompany < ActiveRecord::Base
     def self.find_applicants(company_data)
         company_flat = company_data[0].email
         result = []
-        result << User_Company.all
+        result << UserCompany.all
         company_list = result[0].each do |company|
                  company.company_email
              end
@@ -51,20 +50,18 @@ class UserCompany < ActiveRecord::Base
         end
     end
 
-    def self.user_added_list(profile)
-        puts "Companies lists"
-       companies_list = self.find_company(profile)
-       if companies_list != nil
-       User_view.display_companies(companies_list)
-       else
-        puts "Empty slots"
-        User_view.user_menu(profile)
-       end
+    def self.user_added_list(user)
+        if user.usercompanies.length == 0
+            puts "No list yet! Empty list!"
+            User_view.user_menu(user)
+        else
+            list = Company.all.find_by {|added| added.id == user.company_id}
+            User_view.display_companies(list, user)
+        end 
     end
 
-    def self.destory_record(record)
-        p record
-        User_Company.destroy(record.id)
+    def self.destory_id(result)
+        UserCompany.destroy(result.id)
         puts "Remove complete!!"
     end
 end

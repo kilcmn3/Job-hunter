@@ -35,13 +35,13 @@ class User < ActiveRecord::Base
             q.messages[:required?] = 'Please re-enter again'
             q.messages[:valid?] = 'Invalid email address'
         end
-        find_email = User.all.find_by email: input
+        user = User.find_by(email: input)
         
-        if find_email == nil
+        if user == nil
             user = User.new(email: input)
             user.user_info
         else  
-            User_view.user_menu
+            User_view.user_menu(user)
         end
     end
 
@@ -49,6 +49,7 @@ class User < ActiveRecord::Base
         self.first_name = validation_required("first name")
         self.last_name = validation_required("last name")
         self.contact = validation_required("contact")
+        puts "Thank you for signing up!"
         self.save
         User_view.user_menu(self)
     end

@@ -6,6 +6,8 @@ class User_view < ActiveRecord::Base
     @@user = nil
     @@users = nil
 
+
+    #TODO : need to work on companyside now
     def self.user_or_company 
         input = PROMPT.select("who are you user? or company?") do |menu|
             menu.enum '.'
@@ -17,7 +19,7 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            User.user_email
+            Ucontact
         when 2
             Company.match_company
         when 3
@@ -25,22 +27,19 @@ class User_view < ActiveRecord::Base
         end
     end
 
-    def self.user_menu(profile)
-        @@user = nil
-        @@user = profile
-
+    def self.user_menu(user)
         input = PROMPT.select("What would you like to do?") do |menu|
             menu.choice 'View added List'
             menu.choice 'Edit profile'
             menu.choice 'Job Search'
             menu.choice 'previous page'
         end
-        
+
         case input
         when 'View added List'
-            User_Company.user_added_list(profile)
+            UserCompany.user_added_list(user)
         when 'Edit profile'
-            self.userview_edit_profile(profile)
+            self.user_edit_profile(user)
         when 'Job Search'
             self.main_screen
         when 'previous page'
@@ -171,7 +170,7 @@ class User_view < ActiveRecord::Base
         end
     end
 
-    def self.userview_edit_profile(profile)
+    def self.user_edit_profile(user)
         input = PROMPT.select("Perosal Information") do |menu|
             menu.enum '.'
             menu.choice '@email', 1
@@ -181,50 +180,38 @@ class User_view < ActiveRecord::Base
 
          case input
          when 1
-            self.userview_edit_profile_email(profile)
+            new_email = self.check_validation("email", user)
+            self.user_email(user, new_email)
          when 2
-            self.userview_edit_profile_contact(profile)
+            new_contact = self.check_validation("contact", user)
+            user.contact = new_contact
          when 3
-            self.user_menu(profile)
+            self.user_menu(user)
          end
     end
 
-    def self.userview_edit_profile_email(profile)
-        puts "your current @email is #{profile[0].email}"
+    def self.check_validation(obj, user)
+        puts "your current #{obj} is #{user}"
         answer = PROMPT.yes?('Woud like to change?')
           
-        case answer
-        when true
-        puts "your new @email please"
-        new_email = User.until_no_blank
-        user = User.user_find_email(profile[0].email)
-        user.email = new_email
-        user.save
-        user_profile = []
-        user_profile << user
-        self.userview_edit_profile(user_profile)
-        when false
-            self.userview_edit_profile(profile)
+        if answer == true
+             puts "Ok!let's update your  new #{obj}!"
+             new_email = User.validation_required("#{obj}")
+             return new_email
+        else answer == false
+            self.user_edit_profile(obj, user)
         end
     end
 
-    def self.userview_edit_profile_contact(profile)
-        puts "your current contact is #{profile[0].contact}"
-        answer = PROMPT.yes?('Woud like to change?')
-
-        case answer
-        when true
-        puts "your new contact please"
-        new_contact = User.until_no_blank
-        user = User.user_find_email(profile[0].email)
-        user.contact = new_contact
-        user.save
-        user_profile = []
-        user_profile << user
-        self.userview_edit_profile(user_profile)
-        when false
-            self.userview_edit_profile(profile)
+    def self.user_email(user, new_email)
+         find_if_exit = User.find_by(email: new_email) 
+        if find_if_exit != nil
+            puts "Someone is using that email!"
+        else
+            user.email = new_email
+            user.save 
         end
+        self.user_edit_profile(user)
     end
 
     def self.main_screen 
@@ -239,30 +226,23 @@ class User_view < ActiveRecord::Base
           if input == '**exit program!'
             puts "See you again!"
           else
-          Company.display_companies_list(input)
+          Company.find_match_companies(input)
           end
     end
 
-    def self.display_companies(list)
-        @@companies = nil
-        @@companies = list
-        companies = list.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
+    def self.display_companies(display, user = nil)
+        companies = display.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
         input = PROMPT.select("List of companies", companies , per_page: 4) 
         
         delimiters = [', ', ': ']
         split_input = input.split(Regexp.union(delimiters))[1]
-   
-        result = list.select do |company|
-            company.name== split_input
-       end
-       self.menu_with_chosen_company(result)
+ 
+        chosen_company = Company.find{|chosen| chosen.name == split_input}
+        self.menu_with_chosen_company(chosen_company, user, dispaly)
     end
       
-    def self.menu_with_chosen_company(result)
-        @@company = nil
-        @@company = result
-
-        puts "Company name: #{result[0].name} || Company email: #{result[0].email} || Program language: #{result[0].program_language}"
+    def self.menu_with_chosen_company(result, user = nil, display = nil)
+        puts "Company name: #{result.name} || Company email: #{result.email} || Program language: #{result.program_language}"
         input = PROMPT.select("What would you like to do?") do |menu|
             menu.enum '.'
 
@@ -273,26 +253,22 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            self.user_apply_page(result)
+            self.user_apply_page(result, user)
         when 2
-            self.display_companies(@@companies)
+            self.display_companies(display)
         when 3
-            self.user_menu(@@user)
+            self.user_menu(user)
         end
     end
 
-    def self.user_apply_page(company_info)
-        user_email = @@user[0].email
-        company_email = @@company
-
-        result = User_Company.find_if_exit(company_email[0])
+    def self.user_apply_page(company, user = nil)
+        result = User_Company.find_if_exit(company.id)
         if result == nil
-            User_Company.create(user_email: user_email,  company_email: company_email[0].email)
+            User_Company.create(user_id: user.id,  company_id: company.id)
             puts "Apply done!"
-            company_last = Company.find_company(company_email[0].email)
-            self.menu_with_chosen_company(company_last)
+            self.menu_with_chosen_company(company, user)
         else 
-            puts "You've already added!"
+            puts "You've already applied!"
             input = PROMPT.select("what would you like to do?") do |menu|
                 menu.enum '.'
 
@@ -302,10 +278,10 @@ class User_view < ActiveRecord::Base
 
             case input
             when 1
-                destroy_it = User_Company.destory_record(result)
-                self.menu_with_chosen_company(company_info)
+                User_Company.destory_id(result)
+                self.menu_with_chosen_company(company, user)
             when 2
-                self.menu_with_chosen_company(company_info)
+                self.menu_with_chosen_company(company, user)
             end
         end
     end

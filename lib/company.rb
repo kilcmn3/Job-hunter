@@ -10,33 +10,33 @@ class Company < ActiveRecord::Base
     end
 
     def self.find_company(email = nil)
-        if email == nil
-            company_profile = Company.all.select do |companies|
-            companies.program_language == @@storage[0]
-            end
-        else
-            company_profile = Company.all.select do |companies|
-            companies.email == email
-            end
-        end
-          company_profile
+        # if email == nil
+        #     company_profile = Company.all.select do |companies|
+        #     companies.program_language == @@storage[0]
+        #     end
+        # else
+        #     company_profile = Company.all.select do |companies|
+        #     companies.email == email
+        #     end
+        # end
+        #   company_profile
     end
 
-    def self.until_no_blank(input = "")
-        result = nil
-        edit_profile = nil
-        while input = gets.chomp
-            case blank = User.blank_string?(input)
-            when blank == true
-                 @@storage << input.downcase
-                 edit_profile = input.downcase
-                break
-            else
-                puts "please re-enter again"
-            end
-        end
-        edit_profile
-    end
+    # def self.until_no_blank(input = "")
+    #     result = nil
+    #     edit_profile = nil
+    #     while input = gets.chomp
+    #         case blank = User.blank_string?(input)
+    #         when blank == true
+    #              @@storage << input.downcase
+    #              edit_profile = input.downcase
+    #             break
+    #         else
+    #             puts "please re-enter again"
+    #         end
+    #     end
+    #     edit_profile
+    # end
     
     def self.match_company
         puts "Hello! Please enter your company email."
@@ -53,11 +53,9 @@ class Company < ActiveRecord::Base
         end
     end
 
-    def self.display_companies_list(input)
-        @@storage = []
-        @@storage << input.downcase
-        list = self.find_company
-        User_view.display_companies(list)
+    def self.find_match_companies(input)
+        result = Company.all.find_by{|display| display.program_language == input.downcase}
+        User_view.display_companies(result)
     end
 end
 
