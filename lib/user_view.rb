@@ -1,13 +1,13 @@
 puts "Welcome  to my User_create Test world!"
 class User_view < ActiveRecord::Base
-    @@prompt = TTY::Prompt.new
+    PROMPT = TTY::Prompt.new
     @@companies = nil
     @@company = nil
     @@user = nil
     @@users = nil
 
     def self.user_or_company 
-        input = @@prompt.select("who are you user? or company?") do |menu|
+        input = PROMPT.select("who are you user? or company?") do |menu|
             menu.enum '.'
 
             menu.choice 'User', 1
@@ -29,7 +29,7 @@ class User_view < ActiveRecord::Base
         @@user = nil
         @@user = profile
 
-        input = @@prompt.select("What would you like to do?") do |menu|
+        input = PROMPT.select("What would you like to do?") do |menu|
             menu.choice 'View added List'
             menu.choice 'Edit profile'
             menu.choice 'Job Search'
@@ -50,7 +50,7 @@ class User_view < ActiveRecord::Base
     def self.company_menu(company_profile)
         @@company = nil
         @@company = company_profile
-        input = @@prompt.select("What would like to do?") do |menu|
+        input = PROMPT.select("What would like to do?") do |menu|
             menu.enum '.'
 
             menu.choice 'Applicants list', 1
@@ -74,7 +74,7 @@ class User_view < ActiveRecord::Base
         @@users = list
 
             users = list.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
-            input = @@prompt.select("List of applicants", users , per_page: 4) 
+            input = PROMPT.select("List of applicants", users , per_page: 4) 
         
             delimiters = [', ', ': ']
             split_input = input.split(Regexp.union(delimiters))[1]
@@ -87,7 +87,7 @@ class User_view < ActiveRecord::Base
 
     def self.companyview_selected_applicatn(applicant)
         puts "applicant name: #{applicant.name}, email: #{applicant.email}, contact: #{applicant.contact}"
-        input = @@prompt.select("what would you like to do?") do |menu|
+        input = PROMPT.select("what would you like to do?") do |menu|
             menu.enum '.'
 
             menu.choice 'Remove applicant', 1
@@ -109,7 +109,7 @@ class User_view < ActiveRecord::Base
     end
 
     def self.companyview_edit_profile(company_profile)
-        input = @@prompt.select("Company infomation") do |menu|
+        input = PROMPT.select("Company infomation") do |menu|
             menu.enum '.'
 
             menu.choice '@email', 1
@@ -130,7 +130,7 @@ class User_view < ActiveRecord::Base
 
     def self.companyview_edit_profile_email(company_profile)
         puts "Company current @email is #{company_profile[0].email}"
-        answer = @@prompt.yes?('Woud like to change?')
+        answer = PROMPT.yes?('Woud like to change?')
           
         case answer
         when true
@@ -151,7 +151,7 @@ class User_view < ActiveRecord::Base
 
     def self.companyview_edit_profile_program_language(company_profile)
         puts "Company current program language is #{company_profile[0].program_language}"
-        answer = @@prompt.yes?('Would you like to change?')
+        answer = PROMPT.yes?('Would you like to change?')
 
         case answer
         when true
@@ -171,7 +171,7 @@ class User_view < ActiveRecord::Base
     end
 
     def self.userview_edit_profile(profile)
-        input = @@prompt.select("Perosal Information") do |menu|
+        input = PROMPT.select("Perosal Information") do |menu|
             menu.enum '.'
             menu.choice '@email', 1
             menu.choice 'Contact', 2
@@ -190,7 +190,7 @@ class User_view < ActiveRecord::Base
 
     def self.userview_edit_profile_email(profile)
         puts "your current @email is #{profile[0].email}"
-        answer = @@prompt.yes?('Woud like to change?')
+        answer = PROMPT.yes?('Woud like to change?')
           
         case answer
         when true
@@ -209,7 +209,7 @@ class User_view < ActiveRecord::Base
 
     def self.userview_edit_profile_contact(profile)
         puts "your current contact is #{profile[0].contact}"
-        answer = @@prompt.yes?('Woud like to change?')
+        answer = PROMPT.yes?('Woud like to change?')
 
         case answer
         when true
@@ -227,7 +227,7 @@ class User_view < ActiveRecord::Base
     end
 
     def self.main_screen 
-        input = @@prompt.select("Choose your program lanaguage") do |menu|
+        input = PROMPT.select("Choose your program lanaguage") do |menu|
               menu.choice 'Ruby'
               menu.choice 'Java'
               menu.choice 'Python'
@@ -246,7 +246,7 @@ class User_view < ActiveRecord::Base
         @@companies = nil
         @@companies = list
         companies = list.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
-        input = @@prompt.select("List of companies", companies , per_page: 4) 
+        input = PROMPT.select("List of companies", companies , per_page: 4) 
         
         delimiters = [', ', ': ']
         split_input = input.split(Regexp.union(delimiters))[1]
@@ -262,7 +262,7 @@ class User_view < ActiveRecord::Base
         @@company = result
 
         puts "Company name: #{result[0].name} || Company email: #{result[0].email} || Program language: #{result[0].program_language}"
-        input = @@prompt.select("What would you like to do?") do |menu|
+        input = PROMPT.select("What would you like to do?") do |menu|
             menu.enum '.'
 
             menu.choice 'Apply', 1
@@ -292,7 +292,7 @@ class User_view < ActiveRecord::Base
             self.menu_with_chosen_company(company_last)
         else 
             puts "You've already added!"
-            input = @@prompt.select("what would you like to do?") do |menu|
+            input = PROMPT.select("what would you like to do?") do |menu|
                 menu.enum '.'
 
                 menu.choice 'Remove from my list', 1
