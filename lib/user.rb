@@ -4,15 +4,6 @@ class User < ActiveRecord::Base
 
     PROMPT = TTY::Prompt.new
 
-    # def self.user_find_email(email= nil)
-    #     if @@storage.length > 0 && email == nil
-    #     find_profile = User.all.find{|user| user.email == @@storage[0]}
-    #     else
-    #     find_profile = User.all.find{|user| user.email == email}
-    #     end
-    #     find_profile
-    # end
-
     def validation_required(obj)
         if  obj == "contact"
             input = PROMPT.ask("What's your #{obj} #ex)123-456-7890 => 1234567890# ?", convert: :int, required: true)
@@ -59,4 +50,6 @@ class User < ActiveRecord::Base
         self.last_name = validation_required("last name")
         self.contact = validation_required("contact")
         self.save
+        User_view.user_menu(self)
     end
+end

@@ -35,6 +35,7 @@ class User_view < ActiveRecord::Base
             menu.choice 'Job Search'
             menu.choice 'previous page'
         end
+        
         case input
         when 'View added List'
             User_Company.user_added_list(profile)
