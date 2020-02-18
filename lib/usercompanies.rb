@@ -1,16 +1,12 @@
-class UserCompany < ActiveRecord::Base
+class Usercompany < ActiveRecord::Base
     belongs_to :user 
     belongs_to :company
     
-    def self.create(user_id: , company_id:)
-        user_company = UserCompany.new(user_email, company_email)
+    def create(user_id: , company_id:, date: )
+        user_company = Usercompany.new(user_id, company_id, date)
         user_company.save
     end
-
-    # def self.find_if_exit(id)
-    #    result = UserCompany.find(id)
-    # end
-
+    
     def self.find_company(search)
         search_email = search[0]
        search_list = UserCompany.all.select do |search|

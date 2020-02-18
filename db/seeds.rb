@@ -13,3 +13,4 @@ companyG = Company.create(name: "Indeed", email: "indeed@email.com", program_lan
 companyH = Company.create(name: "Github", email: "github@email.com", program_language: "javascript")
 companyI = Company.create(name: "Apple", email: "apple@email.com", program_language: "python")
 
+david = User.create(first_name: "david", last_name: "shin", email: "david@gmail.com", contact: 1234567890)

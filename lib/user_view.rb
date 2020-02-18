@@ -19,7 +19,7 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            Ucontact
+            User.user_email
         when 2
             Company.match_company
         when 3
@@ -37,7 +37,7 @@ class User_view < ActiveRecord::Base
 
         case input
         when 'View added List'
-            UserCompany.user_added_list(user)
+            Usercompany.user_added_list(user)
         when 'Edit profile'
             self.user_edit_profile(user)
         when 'Job Search'
@@ -180,27 +180,31 @@ class User_view < ActiveRecord::Base
 
          case input
          when 1
-            new_email = self.check_validation("email", user)
-            self.user_email(user, new_email)
+            new_email = self.check_validation("email", user, user.email)
          when 2
-            new_contact = self.check_validation("contact", user)
-            user.contact = new_contact
+            new_contact = self.check_validation("contact", user, user.contact)
          when 3
             self.user_menu(user)
          end
     end
 
-    def self.check_validation(obj, user)
-        puts "your current #{obj} is #{user}"
+    def self.check_validation(obj, user, user_info)
+        puts "your current #{obj} is #{user_info}"
         answer = PROMPT.yes?('Woud like to change?')
-          
-        if answer == true
-             puts "Ok!let's update your  new #{obj}!"
-             new_email = User.validation_required("#{obj}")
-             return new_email
-        else answer == false
-            self.user_edit_profile(obj, user)
+   
+            if answer == true
+                 puts "Ok!let's update your  new #{obj}!"
+                if obj == "email"
+                    new_email = user.validation_required("#{obj}")
+                    User_view.user_email(user, new_email)
+                elsif obj == "contact"
+                    new_contact = user.validation_required("#{obj}")
+                    user.update(contact: new_contact)
+                    self.user_edit_profile(user)
+            else answer == false
+            self.user_edit_profile(user)
         end
+    end
     end
 
     def self.user_email(user, new_email)
