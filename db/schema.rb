@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2020_02_19_180247) do
 
-  create_table "comapnies", force: :cascade do |t|
+  create_table "companies", force: :cascade do |t|
     t.string "name"
     t.string "email"
     t.string "program_language"

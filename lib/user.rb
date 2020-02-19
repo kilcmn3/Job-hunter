@@ -43,10 +43,10 @@ class User < ActiveRecord::Base
         user = User.find_by(email: input)
         
         if user == nil
-            user = User.create(email: input)
+            user = User.new(email: input)
             user.user_info
         else  
-            User_view.user_menu(user)
+            User_view.main_screen(user)
         end
     end
 

@@ -264,11 +264,10 @@ class User_view < ActiveRecord::Base
             self.user_menu(user)
         end
     end
-
+    #TODO : need to work on update issue ! join tables
     def self.user_apply_page(company, user = nil)
-        result = Usercompany.where.not(id: user.id)
-        if result.length == 0
-            joint = Usercompany.create(user_id: user.id, company_id: company.id)
+        if user.usercompanies.length == 0
+            joint = Usercompany.create
             user.usercompanies.push(joint)
             user.save
             joint.user = user
