@@ -2,10 +2,10 @@ class Usercompany < ActiveRecord::Base
     belongs_to :user 
     belongs_to :company
     
-    def create(user_id: , company_id:, date: )
-        user_company = Usercompany.new(user_id, company_id, date)
-        user_company.save
-    end
+    # def create(user_id: , company_id:, date: )
+    #     user_company = Usercompany.new(user_id, company_id, date)
+    #     user_company.save
+    # end
     
     def self.find_company(search)
         search_email = search[0]
@@ -47,17 +47,17 @@ class Usercompany < ActiveRecord::Base
     end
 
     def self.user_added_list(user)
-        if user.usercompanies.length == 0
+        if user.id == nil
             puts "No list yet! Empty list!"
             User_view.user_menu(user)
         else
-            list = Company.all.find_by {|added| added.id == user.company_id}
+            list = Company.all.select {|added| added.id == user.user_id}
             User_view.display_companies(list, user)
         end 
     end
 
-    def self.destory_id(result)
-        UserCompany.destroy(result.id)
-        puts "Remove complete!!"
-    end
+    # def self.destory_id(result)
+    #     Usercompany.destroy(result.id)
+    #     puts "Remove complete!!"
+    # end
 end

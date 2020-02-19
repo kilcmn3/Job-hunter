@@ -4,10 +4,10 @@ class User < ActiveRecord::Base
 
     PROMPT = TTY::Prompt.new
     
-    def create(first_name: ,last_name: ,email:, contact:)
-        user = User.new(first_name, last_name, email, contact)
-        user.save
-    end
+    # def create(first_name: ,last_name: ,email:, contact:)
+    #     user = User.new(first_name, last_name, email, contact)
+    #     user.save
+    # end
 
     def validation_required(obj)
         if  obj == "contact"
@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
         user = User.find_by(email: input)
         
         if user == nil
-            user = User.new(email: input)
+            user = User.create(email: input)
             user.user_info
         else  
             User_view.user_menu(user)
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
         self.last_name = validation_required("last name")
         self.contact = validation_required("contact")
         puts "Thank you for signing up!"
-        self.save
+        # self.save
         User_view.user_menu(self)
     end
 end

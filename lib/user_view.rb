@@ -41,7 +41,7 @@ class User_view < ActiveRecord::Base
         when 'Edit profile'
             self.user_edit_profile(user)
         when 'Job Search'
-            self.main_screen
+            self.main_screen(user)
         when 'previous page'
             self.user_or_company
         end
@@ -218,7 +218,7 @@ class User_view < ActiveRecord::Base
         self.user_edit_profile(user)
     end
 
-    def self.main_screen 
+    def self.main_screen(user)
         input = PROMPT.select("Choose your program lanaguage") do |menu|
               menu.choice 'Ruby'
               menu.choice 'Java'
@@ -230,22 +230,22 @@ class User_view < ActiveRecord::Base
           if input == '**exit program!'
             puts "See you again!"
           else
-          Company.find_match_companies(input)
+          Company.find_match_companies(input, user)
           end
     end
 
-    def self.display_companies(display, user = nil)
-        companies = display.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
+    def self.display_companies(list, user = nil)
+        companies = list.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
         input = PROMPT.select("List of companies", companies , per_page: 4) 
         
         delimiters = [', ', ': ']
         split_input = input.split(Regexp.union(delimiters))[1]
  
         chosen_company = Company.find{|chosen| chosen.name == split_input}
-        self.menu_with_chosen_company(chosen_company, user, dispaly)
+        self.menu_with_chosen_company(chosen_company, user, list)
     end
       
-    def self.menu_with_chosen_company(result, user = nil, display = nil)
+    def self.menu_with_chosen_company(result, user = nil, list = nil)
         puts "Company name: #{result.name} || Company email: #{result.email} || Program language: #{result.program_language}"
         input = PROMPT.select("What would you like to do?") do |menu|
             menu.enum '.'
@@ -259,19 +259,24 @@ class User_view < ActiveRecord::Base
         when 1
             self.user_apply_page(result, user)
         when 2
-            self.display_companies(display)
+            self.user_added_list(user)
         when 3
             self.user_menu(user)
         end
     end
 
     def self.user_apply_page(company, user = nil)
-        result = User_Company.find_if_exit(company.id)
-        if result == nil
-            User_Company.create(user_id: user.id,  company_id: company.id)
+        result = Usercompany.where.not(id: user.id)
+        if result.length == 0
+            joint = Usercompany.create(user_id: user.id, company_id: company.id)
+            user.usercompanies.push(joint)
+            user.save
+            joint.user = user
+            joint.save
+            p user.companies
             puts "Apply done!"
             self.menu_with_chosen_company(company, user)
-        else 
+        elsif result[0].user_id == user.id
             puts "You've already applied!"
             input = PROMPT.select("what would you like to do?") do |menu|
                 menu.enum '.'
@@ -282,7 +287,7 @@ class User_view < ActiveRecord::Base
 
             case input
             when 1
-                User_Company.destory_id(result)
+                Usercompany.destroy(result[0].user_id)
                 self.menu_with_chosen_company(company, user)
             when 2
                 self.menu_with_chosen_company(company, user)

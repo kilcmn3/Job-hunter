@@ -53,9 +53,9 @@ class Company < ActiveRecord::Base
         end
     end
 
-    def self.find_match_companies(input)
-        result = Company.all.find_by{|display| display.program_language == input.downcase}
-        User_view.display_companies(result)
+    def self.find_match_companies(input, user = nil)
+        list = Company.all.select{|find| find.program_language == input.downcase}
+        User_view.display_companies(list, user)
     end
 end
 
