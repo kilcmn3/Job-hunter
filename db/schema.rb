@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2020_02_19_180247) do
 
   create_table "usercompanies", force: :cascade do |t|
     t.integer "user_id"
-    t.integer "comapny_id"
+    t.integer "company_id"
   end
 
   create_table "users", force: :cascade do |t|

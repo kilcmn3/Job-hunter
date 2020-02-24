@@ -267,15 +267,14 @@ class User_view < ActiveRecord::Base
     #TODO : need to work on update issue ! join tables
     def self.user_apply_page(company, user = nil)
         if user.usercompanies.length == 0
-            joint = Usercompany.create
-            user.usercompanies.push(joint)
+            usercompany_1 = Usercompany.create
+            user.usercompanies = usercompany_1
             user.save
-            joint.user = user
-            joint.save
-            p user.companies
+            usercompany_1.
+            usercompany_1.save
             puts "Apply done!"
             self.menu_with_chosen_company(company, user)
-        elsif result[0].user_id == user.id
+        elsif Usercompany.find(user.user)
             puts "You've already applied!"
             input = PROMPT.select("what would you like to do?") do |menu|
                 menu.enum '.'
