@@ -47,11 +47,11 @@ class Usercompany < ActiveRecord::Base
     end
 
     def self.user_added_list(user)
-        if user.id == nil
+        if  user.companies.length == 0
             puts "No list yet! Empty list!"
             User_view.user_menu(user)
         else
-            list = Company.all.select {|added| added.id == user.user_id}
+            list = user.companies
             User_view.display_companies(list, user)
         end 
     end

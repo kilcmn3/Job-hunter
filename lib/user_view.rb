@@ -246,6 +246,9 @@ class User_view < ActiveRecord::Base
     end
       
     def self.menu_with_chosen_company(result, user = nil, list = nil)
+        # puts "@@@@@@@@@@@@@"
+        # p result
+        # p user
         puts "Company name: #{result.name} || Company email: #{result.email} || Program language: #{result.program_language}"
         input = PROMPT.select("What would you like to do?") do |menu|
             menu.enum '.'
@@ -259,22 +262,18 @@ class User_view < ActiveRecord::Base
         when 1
             self.user_apply_page(result, user)
         when 2
-            self.user_added_list(user)
+            Usercompany.user_added_list(user)
         when 3
             self.user_menu(user)
         end
     end
     #TODO : need to work on update issue ! join tables
     def self.user_apply_page(company, user = nil)
-        if user.usercompanies.length == 0
-            usercompany_1 = Usercompany.create
-            user.usercompanies = usercompany_1
-            user.save
-            usercompany_1.
-            usercompany_1.save
+        if user.companies.length == 0
+            user.companies << company
             puts "Apply done!"
             self.menu_with_chosen_company(company, user)
-        elsif Usercompany.find(user.user)
+        elsif Usercompany.exists?(company.id)
             puts "You've already applied!"
             input = PROMPT.select("what would you like to do?") do |menu|
                 menu.enum '.'
@@ -285,7 +284,7 @@ class User_view < ActiveRecord::Base
 
             case input
             when 1
-                Usercompany.destroy(result[0].user_id)
+                Usercompany.destroy(user.id)
                 self.menu_with_chosen_company(company, user)
             when 2
                 self.menu_with_chosen_company(company, user)

@@ -45,8 +45,9 @@ class User < ActiveRecord::Base
         if user == nil
             user = User.new(email: input)
             user.user_info
-        else  
-            User_view.main_screen(user)
+        else 
+            puts "Welcome Back!" 
+            User_view.user_menu(user)
         end
     end
 
@@ -55,7 +56,7 @@ class User < ActiveRecord::Base
         self.last_name = validation_required("last name")
         self.contact = validation_required("contact")
         puts "Thank you for signing up!"
-        # self.save
+        self.save
         User_view.user_menu(self)
     end
 end
