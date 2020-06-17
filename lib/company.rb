@@ -37,16 +37,16 @@ class Company < ActiveRecord::Base
         result = Company.find_by(email: company_email)
         if  result == nil
             puts "Company is not registered yet."
-            User_view.user_or_company
+            UserView.user_or_company
         else
             puts "Welcome back!"
-            User_view.company_menu(result)
+            UserView.company_menu(result)
         end
     end
 
     # def self.find_match_companies(input)
     #     result = Company.all.select{|display| display.program_language == input.downcase}
-    #     User_view.display_companies(result, nil)
+    #     UserView.display_companies(result, nil)
     # end
 end
 

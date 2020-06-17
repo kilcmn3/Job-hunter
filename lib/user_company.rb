@@ -2,6 +2,7 @@ class UserCompany < ActiveRecord::Base
     belongs_to :user 
     belongs_to :company
 
+    PROMPT = TTY::Prompt.new
     # def self.find_if_exit(id)
     #    result = UserCompany.find(id)
     # end
@@ -41,17 +42,25 @@ class UserCompany < ActiveRecord::Base
             final_result
         else 
             puts "No applicants :-("
-            User_view.company_menu(company_data)
+            UserView.company_menu(company_data)
         end
     end
 
     def self.user_added_list(user)
-        if user.usercompanies.length == 0
+        if user.userCompanies.length == 0
             puts "No list yet! Empty list!"
-            User_view.user_menu(user)
+            UserView.user_menu(user)
         else
-            list = Company.all.find_by {|added| added.id == user.company_id}
-            User_view.display_companies(list, user)
+            list = user.companies
+            companies = list.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
+            input = PROMPT.select("List of companies", companies , per_page: 4) 
+        
+            delimiters = [', ', ': ']
+            split_input = input.split(Regexp.union(delimiters))[1]
+            
+            chosen_company = Company.find{|chosen| chosen.name == split_input}
+          
+            UserView.menu_with_chosen_company(chosen_company, user)  
         end 
     end
 

@@ -1,5 +1,5 @@
 puts "Welcome  to my User_create Test world!"
-class User_view < ActiveRecord::Base
+class UserView < ActiveRecord::Base
     PROMPT = TTY::Prompt.new
     @@companies = nil
     @@company = nil
@@ -28,6 +28,7 @@ class User_view < ActiveRecord::Base
     end
 
     def self.user_menu(user)
+        @@user = user
         input = PROMPT.select("What would you like to do?") do |menu|
             menu.choice 'View added List'
             menu.choice 'Edit profile'
@@ -41,7 +42,6 @@ class User_view < ActiveRecord::Base
         when 'Edit profile'
             self.user_edit_profile(user)
         when 'Job Search'
-            @@user = user
             self.main_screen
         when 'previous page'
             self.user_or_company
@@ -234,6 +234,9 @@ class User_view < ActiveRecord::Base
     end
 
     def self.display_companies
+        if @@companies == nil
+            self.user_menu(@@user)
+        else
         companies = @@companies.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
         input = PROMPT.select("List of companies", companies , per_page: 4) 
         
@@ -242,8 +245,9 @@ class User_view < ActiveRecord::Base
         
         chosen_company = Company.find{|chosen| chosen.name == split_input}
         self.menu_with_chosen_company(chosen_company, @@user)
+        end
     end
-      
+    
     def self.menu_with_chosen_company(result, user)
         puts "Company name: #{result.name} || Company email: #{result.email} || Program language: #{result.program_language}"
         input = PROMPT.select("What would you like to do?") do |menu|

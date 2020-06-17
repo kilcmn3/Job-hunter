@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
             user = User.new(email: input)
             user.user_info
         else  
-            User_view.user_menu(user)
+            UserView.user_menu(user)
         end
     end
 
@@ -51,6 +51,6 @@ class User < ActiveRecord::Base
         self.contact = validation_required("contact")
         puts "Thank you for signing up!"
         self.save
-        User_view.user_menu(self)
+        UserView.user_menu(self)
     end
 end
