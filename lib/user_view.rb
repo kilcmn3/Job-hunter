@@ -19,7 +19,7 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            Ucontact
+            User.user_email
         when 2
             Company.match_company
         when 3
@@ -41,6 +41,7 @@ class User_view < ActiveRecord::Base
         when 'Edit profile'
             self.user_edit_profile(user)
         when 'Job Search'
+            @@user = user
             self.main_screen
         when 'previous page'
             self.user_or_company
@@ -60,7 +61,7 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            list = User_Company.find_applicants(company_profile)
+            list = UserCompany.find_applicants(company_profile)
             self.companyview_applicants_list(list)
         when 2
             self.companyview_edit_profile(company_profile)
@@ -97,9 +98,9 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            user_profile = User_Company.find_if_exit(@@company[0])
-            User_Company.find_applicants(@@company)
-            User_Company.destory_record(user_profile)
+            user_profile = UserCompany.find_if_exit(@@company[0])
+            UserCompany.find_applicants(@@company)
+            UserCompany.destory_record(user_profile)
             self.companyview_applicants_list(@@users)
         when 2
             self.companyview_applicants_list(@@users)
@@ -214,7 +215,7 @@ class User_view < ActiveRecord::Base
         self.user_edit_profile(user)
     end
 
-    def self.main_screen 
+    def self.main_screen
         input = PROMPT.select("Choose your program lanaguage") do |menu|
               menu.choice 'Ruby'
               menu.choice 'Java'
@@ -226,22 +227,24 @@ class User_view < ActiveRecord::Base
           if input == '**exit program!'
             puts "See you again!"
           else
-          Company.find_match_companies(input)
+            result = Company.all.select{|display| display.program_language == input.downcase}
+            @@companies = result
+            self.display_companies
           end
     end
 
-    def self.display_companies(display, user = nil)
-        companies = display.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
+    def self.display_companies
+        companies = @@companies.map {|choice| "Name: #{choice.name}, Language: #{choice.program_language}"}
         input = PROMPT.select("List of companies", companies , per_page: 4) 
         
         delimiters = [', ', ': ']
         split_input = input.split(Regexp.union(delimiters))[1]
- 
+        
         chosen_company = Company.find{|chosen| chosen.name == split_input}
-        self.menu_with_chosen_company(chosen_company, user, dispaly)
+        self.menu_with_chosen_company(chosen_company, @@user)
     end
       
-    def self.menu_with_chosen_company(result, user = nil, display = nil)
+    def self.menu_with_chosen_company(result, user)
         puts "Company name: #{result.name} || Company email: #{result.email} || Program language: #{result.program_language}"
         input = PROMPT.select("What would you like to do?") do |menu|
             menu.enum '.'
@@ -253,18 +256,18 @@ class User_view < ActiveRecord::Base
 
         case input
         when 1
-            self.user_apply_page(result, user)
+            self.user_apply_page(result, @@user)
         when 2
-            self.display_companies(display)
+            self.display_companies
         when 3
-            self.user_menu(user)
+            self.user_menu(@@user)
         end
     end
 
-    def self.user_apply_page(company, user = nil)
-        result = User_Company.find_if_exit(company.id)
+    def self.user_apply_page(company, user)
+        result = UserCompany.find_by(company_id: company.id)
         if result == nil
-            User_Company.create(user_id: user.id,  company_id: company.id)
+            UserCompany.create(user_id: user.id,  company_id: company.id)
             puts "Apply done!"
             self.menu_with_chosen_company(company, user)
         else 
@@ -278,7 +281,7 @@ class User_view < ActiveRecord::Base
 
             case input
             when 1
-                User_Company.destory_id(result)
+                UserCompany.destory_id(result)
                 self.menu_with_chosen_company(company, user)
             when 2
                 self.menu_with_chosen_company(company, user)

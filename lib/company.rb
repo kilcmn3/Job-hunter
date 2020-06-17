@@ -1,13 +1,6 @@
 class Company < ActiveRecord::Base
-    has_many :user_companies
-    has_many :users , through: :user_companies
-
-    @@storage = []
-
-    def create(name:, email:, program_language: )
-        company = Company.new(name, email, program_language)
-        company.save
-    end
+    has_many :userCompanies
+    has_many :users , through: :userCompanies
 
     def self.find_company(email = nil)
         # if email == nil
@@ -40,23 +33,21 @@ class Company < ActiveRecord::Base
     
     def self.match_company
         puts "Hello! Please enter your company email."
-        company_email = Company.until_no_blank
-        result = self.find_company(company_email)
-        if  result.length == 0
+        company_email = gets.chomp
+        result = Company.find_by(email: company_email)
+        if  result == nil
             puts "Company is not registered yet."
             User_view.user_or_company
         else
-            @@storage = nil
-            @@storage = result
             puts "Welcome back!"
             User_view.company_menu(result)
         end
     end
 
-    def self.find_match_companies(input)
-        result = Company.all.find_by{|display| display.program_language == input.downcase}
-        User_view.display_companies(result)
-    end
+    # def self.find_match_companies(input)
+    #     result = Company.all.select{|display| display.program_language == input.downcase}
+    #     User_view.display_companies(result, nil)
+    # end
 end
 
    

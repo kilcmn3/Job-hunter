@@ -1,12 +1,12 @@
 class User < ActiveRecord::Base
-    has_many :user_companies
-    has_many :companies , through: :user_companies
+    has_many :userCompanies
+    has_many :companies , through: :userCompanies
 
     PROMPT = TTY::Prompt.new
 
     def validation_required(obj)
         if  obj == "contact"
-            input = PROMPT.ask("What's your #{obj} #ex)123-456-7890 => 1234567890# ?", convert: :int, required: true)
+            input = PROMPT.ask("What's your #{obj} #ex)123-456-7890 => 1234567890# ?",  required: true)
          else
             input = PROMPT.ask("What's your #{obj}? **No space please") do |q|
             q.required true
