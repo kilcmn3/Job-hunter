@@ -61,10 +61,14 @@ class UserView < ActiveRecord::Base
 
         case input
         when 1
-            list = UserCompany.find_applicants(company_profile)
-            self.companyview_applicants_list(list)
+            if !@@company.users 
+                puts "No applicants :-("
+                UserView.company_menu(@@company)
+            else
+                self.companyview_applicants_list(@@company.users )
+            end
         when 2
-            self.companyview_edit_profile(company_profile)
+            self.companyview_edit_profile(@@company)
         when 3
             self.user_or_company
         end
@@ -74,20 +78,20 @@ class UserView < ActiveRecord::Base
         @@users = nil
         @@users = list
 
-            users = list.map {|choice| "Name: #{choice.name}, email: #{choice.email}"}
+            users = list.map {|choice| "Name: #{choice.first_name} #{choice.last_name}, Email: #{choice.email}"}
             input = PROMPT.select("List of applicants", users , per_page: 4) 
         
             delimiters = [', ', ': ']
-            split_input = input.split(Regexp.union(delimiters))[1]
+            split_input = input.split(Regexp.union(delimiters))[-1]
             
-            result = list.select do |user|
-            user.name == split_input
+            result = list.select do |target|
+                target.email == split_input
             end
-            self.companyview_selected_applicatn(result[0])
-    end
-
-    def self.companyview_selected_applicatn(applicant)
-        puts "applicant name: #{applicant.name}, email: #{applicant.email}, contact: #{applicant.contact}"
+            self.companyview_selected_applicatn(result)
+        end
+        
+        def self.companyview_selected_applicatn(applicant)
+        puts "Applicant Name: #{applicant[0].first_name} #{applicant[0].last_name}, Email: #{applicant[0].email}, Contact: #{applicant[0].contact}"
         input = PROMPT.select("what would you like to do?") do |menu|
             menu.enum '.'
 
@@ -130,35 +134,32 @@ class UserView < ActiveRecord::Base
     end
 
     def self.companyview_edit_profile_email(company_profile)
-        puts "Company current @email is #{company_profile[0].email}"
-        answer = PROMPT.yes?('Woud like to change?')
+        puts "Company current @email is #{company_profile.email}"
+        answer = PROMPT.yes?('Would like to change?')
           
         case answer
         when true
         puts "Company new @email please"
         new_email = Company.until_no_blank
-        company = Company.find_company(company_profile[0].email)[0]
-        company.email = new_email
-        company.save
+        company = Company.find_by(email: company_profile.email)
+        company.update(email: new_email)
         puts "Company new @email is #{company.email}"
 
-        company_new_profile = []
-        company_new_profile << company
-        self.companyview_edit_profile(company_new_profile)
+        self.companyview_edit_profile(company)
         when false
             self.companyview_edit_profile(company_profile)
         end
     end
 
     def self.companyview_edit_profile_program_language(company_profile)
-        puts "Company current program language is #{company_profile[0].program_language}"
+        puts "Company current program language is #{company_profile.program_language}"
         answer = PROMPT.yes?('Would you like to change?')
 
         case answer
         when true
         puts "please enter new language to be change."
         new_language = Company.until_no_blank
-        company = Company.find_company(company_profile[0].email)[0]
+        company = Company.find_company(company_profile.email)[0]
         company.program_language = new_language
         company.save
         puts "Company new program langauge is #{company.program_language}"
@@ -193,10 +194,10 @@ class UserView < ActiveRecord::Base
 
     def self.check_validation(obj, user)
         puts "your current #{obj} is #{user}"
-        answer = PROMPT.yes?('Woud like to change?')
+        answer = PROMPT.yes?('Would like to change?')
           
         if answer == true
-             puts "Ok!let's update your  new #{obj}!"
+             puts "Ok!let's update your new #{obj}!"
              new_email = User.validation_required("#{obj}")
              return new_email
         else answer == false

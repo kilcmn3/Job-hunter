@@ -23,29 +23,6 @@ class UserCompany < ActiveRecord::Base
         result[0]
     end
 
-    def self.find_applicants(company_data)
-        company_flat = company_data[0].email
-        result = []
-        result << UserCompany.all
-        company_list = result[0].each do |company|
-                 company.company_email
-             end
-        
-        if company_list.length > 0
-            user_only = company_list.map do |list_applicants|
-                list_applicants.user_email
-            end
-            final_result = []
-            user_only.each do |x|
-                final_result << User.user_find_email(x)
-            end
-            final_result
-        else 
-            puts "No applicants :-("
-            UserView.company_menu(company_data)
-        end
-    end
-
     def self.user_added_list(user)
         if user.userCompanies.length == 0
             puts "No list yet! Empty list!"
