@@ -109,7 +109,6 @@ class UserView < ActiveRecord::Base
         when 1
             target = @@company.users.find(applicant[0][:id])
             @@company.users.delete(target)
-            byebug
             self.companyview_applicants_list(@@company.users)
         when 2
             self.companyview_applicants_list(@@company.users)
@@ -276,9 +275,10 @@ class UserView < ActiveRecord::Base
     def self.user_apply_page(company, user)
         result = UserCompany.find_by(company_id: company.id)
         if result == nil
-            UserCompany.create(user_id: user.id,  company_id: company.id)
-            puts "Apply done!"
-            self.menu_with_chosen_company(company, user)
+            user.companies << company
+            puts "Submitted Successfully!"
+            @@user = user
+            self.display_companies
         else 
             puts "You've already applied!"
             input = PROMPT.select("what would you like to do?") do |menu|
@@ -290,8 +290,9 @@ class UserView < ActiveRecord::Base
 
             case input
             when 1
-                UserCompany.destory_id(result)
-                self.menu_with_chosen_company(company, user)
+                puts "#{company.name} has been removed!"
+                user.companies.delete(company)
+                self.user_menu(user)
             when 2
                 self.menu_with_chosen_company(company, user)
             end
