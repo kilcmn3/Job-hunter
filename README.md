@@ -4,12 +4,12 @@ Job Hunter
 
 ### User View
 ---
-![Watch the video](capture/company-view.mp4?raw=true "User experience")
+![Watch the video](capture/company-view.mp4 "User experience")
 
 
 ### Company View
 ---
-![Watch the video](capture/user-view.mp4?raw=true "Company experience")
+![Watch the video](capture/user-view.mp4 "Company experience")
 
 ---
 ## Technologies Used
