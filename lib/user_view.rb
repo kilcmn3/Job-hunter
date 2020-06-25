@@ -61,11 +61,11 @@ class UserView < ActiveRecord::Base
 
         case input
         when 1
-            if !@@company.users 
+            if @@company.users.length == 0
                 puts "No applicants :-("
                 UserView.company_menu(@@company)
             else
-                self.companyview_applicants_list(@@company.users )
+                self.companyview_applicants_list(@@company.users)
             end
         when 2
             self.companyview_edit_profile(@@company)
@@ -76,8 +76,12 @@ class UserView < ActiveRecord::Base
 
     def self.companyview_applicants_list(list)
         @@users = nil
-        @@users = list
 
+        if list.length == 0
+            puts "No applicants :-("
+            UserView.company_menu(@@company)
+        else
+        @@users = list
             users = list.map {|choice| "Name: #{choice.first_name} #{choice.last_name}, Email: #{choice.email}"}
             input = PROMPT.select("List of applicants", users , per_page: 4) 
         
@@ -89,6 +93,7 @@ class UserView < ActiveRecord::Base
             end
             self.companyview_selected_applicatn(result)
         end
+    end
         
         def self.companyview_selected_applicatn(applicant)
         puts "Applicant Name: #{applicant[0].first_name} #{applicant[0].last_name}, Email: #{applicant[0].email}, Contact: #{applicant[0].contact}"
@@ -102,12 +107,12 @@ class UserView < ActiveRecord::Base
 
         case input
         when 1
-            user_profile = UserCompany.find_if_exit(@@company[0])
-            UserCompany.find_applicants(@@company)
-            UserCompany.destory_record(user_profile)
-            self.companyview_applicants_list(@@users)
+            target = @@company.users.find(applicant[0][:id])
+            @@company.users.delete(target)
+            byebug
+            self.companyview_applicants_list(@@company.users)
         when 2
-            self.companyview_applicants_list(@@users)
+            self.companyview_applicants_list(@@company.users)
         when 3
             self.company_menu(@@company)
         end
@@ -159,9 +164,8 @@ class UserView < ActiveRecord::Base
         when true
         puts "please enter new language to be change."
         new_language = Company.until_no_blank
-        company = Company.find_company(company_profile.email)[0]
-        company.program_language = new_language
-        company.save
+        company = Company.find_by(email: company_profile.email)
+        company.update(program_language: new_language )
         puts "Company new program langauge is #{company.program_language}"
 
         company_new_profile = []
