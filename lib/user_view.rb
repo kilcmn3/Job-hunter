@@ -107,6 +107,7 @@ class UserView < ActiveRecord::Base
 
         case input
         when 1
+            puts "#{applicant[0].first_name} has been removed!"
             target = @@company.users.find(applicant[0][:id])
             @@company.users.delete(target)
             self.companyview_applicants_list(@@company.users)
