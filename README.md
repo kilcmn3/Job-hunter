@@ -4,18 +4,14 @@ Job Hunter
 
 ### User view
 ---
-![](capture/user-view.mp4 "User experience")
-<video width="320" height="240" controls>
-  <source src="capture/user-view.mp4" type="video/mp4">
-</video>
+[![User experience](screen_shots/user-view.PNG)](https://youtu.be/v-415rg1SWk )
+
 
 
 ### Company view
 ---
-![](capture/company-view.mp4 "Company experience")
-<video width="320" height="240" controls>
-  <source src="capture/company-view.mp4" type="video/mp4">
-</video>
+[![Company experience](screen_shots/company-view.PNG)](https://youtu.be/v-415rg1SWk)
+
 
 ## Technologies Used
 
