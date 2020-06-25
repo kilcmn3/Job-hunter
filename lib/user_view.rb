@@ -197,12 +197,11 @@ class UserView < ActiveRecord::Base
     end
 
     def self.check_validation(obj, user)
-        puts "your current #{obj} is #{user}"
+        puts "your current #{obj} is #{user.email}"
         answer = PROMPT.yes?('Would like to change?')
-          
         if answer == true
              puts "Ok!let's update your new #{obj}!"
-             new_email = User.validation_required("#{obj}")
+             new_email = User.validation_required(obj)
              return new_email
         else answer == false
             self.user_edit_profile(obj, user)
@@ -210,13 +209,8 @@ class UserView < ActiveRecord::Base
     end
 
     def self.user_email(user, new_email)
-         find_if_exit = User.find_by(email: new_email) 
-        if find_if_exit != nil
-            puts "Someone is using that email!"
-        else
-            user.email = new_email
-            user.save 
-        end
+        user.update(email: new_email)
+        puts "Update done!"
         self.user_edit_profile(user)
     end
 

@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
 
     PROMPT = TTY::Prompt.new
 
-    def validation_required(obj)
+    def self.validation_required(obj)
         if  obj == "contact"
             input = PROMPT.ask("What's your #{obj} #ex)123-456-7890 => 1234567890# ?",  required: true)
          else
@@ -14,18 +14,18 @@ class User < ActiveRecord::Base
             q.messages[:require?] = "please enter your #{obj}"
             end
         end
-        final_input = double_checking(input, obj)
+        final_input = self.double_checking(input, obj)
         return final_input
     end
 
-    def double_checking(result, obj)
+    def self.double_checking(result, obj)
         answer = PROMPT.yes?("Is your #{obj} is #{result}")
         case answer
         when true
             result
         when false
             puts "Let's do it again :-)"
-            validation_required(obj)
+            self.validation_required(obj)
         end
     end
 

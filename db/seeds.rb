@@ -1,7 +1,7 @@
 puts 'creating tables..'
+UserCompany.destroy_all
 Company.destroy_all
 User.destroy_all
-UserCompany.destroy_all
 
 company1 = Company.create(name: "FlatIron School", email: "flatironschool@email.com", program_language: "ruby")
 company2 = Company.create(name: "Triplebyte", email: "triplebyte@email.com", program_language: "ruby")
