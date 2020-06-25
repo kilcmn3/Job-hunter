@@ -1,17 +1,22 @@
 Job Hunter
 
-# Restaurant Waitlist App - Backend Repository
+# Job Searching App
 
-### User View
+### User view
 ---
-![Watch the video]<video src="capture/company-view.mp4" width="320" height="200" controls preload></video>
+![](capture/user-view.mp4 "User experience")
+<video width="320" height="240" controls>
+  <source src="capture/user-view.mp4" type="video/mp4">
+</video>
 
 
-### Company View
+### Company view
 ---
-![Watch the video](capture/user-view.mp4 "Company experience")
+![](capture/company-view.mp4 "Company experience")
+<video width="320" height="240" controls>
+  <source src="capture/company-view.mp4" type="video/mp4">
+</video>
 
----
 ## Technologies Used
 
 -Ruby
