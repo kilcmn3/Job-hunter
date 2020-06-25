@@ -4,13 +4,13 @@ Job Hunter
 
 ### User view
 ---
-[![User experience](screen_shots/user-view.PNG)](https://youtu.be/RCGikw_4T4I )
+[![User experience(Click for demo videos)](screen_shots/user-view.PNG)](https://youtu.be/RCGikw_4T4I )
 
 
 
 ### Company view
 ---
-[![Company experience](screen_shots/company-view.PNG)](https://youtu.be/v-415rg1SWk)
+[![Company experience(Click for demo videos)](screen_shots/company-view.PNG)](https://youtu.be/v-415rg1SWk)
 
 
 ## Technologies Used
