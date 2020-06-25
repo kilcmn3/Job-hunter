@@ -4,7 +4,7 @@ Job Hunter
 
 ### User View
 ---
-![Watch the video](capture/company-view.mp4 "User experience")
+![Watch the video]<video src="capture/company-view.mp4" width="320" height="200" controls preload></video>
 
 
 ### Company View
