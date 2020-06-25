@@ -4,7 +4,7 @@ Job Hunter
 
 ### User view
 ---
-[![User experience](screen_shots/user-view.PNG)](https://youtu.be/v-415rg1SWk )
+[![User experience](screen_shots/user-view.PNG)](https://youtu.be/RCGikw_4T4I )
 
 
 
